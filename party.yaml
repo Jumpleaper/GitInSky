@@ -1,0 +1,38 @@
+---
+- hosts: all
+  tasks:
+   - git:
+      repo: "https://github.com/Jumpleaper/test.git"
+      dest: /var/www/
+
+   - package:
+      name:
+       - wget
+       - zsh
+       - nginx
+      state: present
+
+   - template:
+      src: /etc/nginx/sites-available/default
+      dest: /etc/nginx/sites-available/default
+      owner: root
+      group: root
+      mode: '0644'
+
+   - shell: nginx -s reload
+
+   - sysctl:
+      name: fs.file-max
+      value: '1204000'
+      state: present
+
+   - sysctl:
+      name: net.core.somaxconn
+      value: '65535'
+      state: present
+
+   - openssh_keypair:
+      path: /root/id1_rsa
+
+   - openssh_keypair:
+      path: /root/id2_rsa
